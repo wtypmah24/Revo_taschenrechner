@@ -1,6 +1,5 @@
 package com.example.taschenrechner.ui.component.button
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,9 +17,9 @@ fun SystemButtonRow(
     onClear: () -> Unit,
     onDelete: () -> Unit,
     onToggleScientific: () -> Unit,
+    onVoiceInput: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -42,11 +41,9 @@ fun SystemButtonRow(
         }
 
         Button(
-            onClick = {
-                Toast.makeText(context, "Not implemented yet 🎙️", Toast.LENGTH_SHORT).show()
-            },
+            onClick = { onVoiceInput() },
             modifier = Modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFBFCBB3))
         ) {
             Text("🎤", color = Color.White)
         }
@@ -60,4 +57,3 @@ fun SystemButtonRow(
         }
     }
 }
-

@@ -24,7 +24,11 @@ import com.example.taschenrechner.viewmodel.CalculatorViewModel
 import com.example.taschenrechner.viewmodel.UiState
 
 @Composable
-fun CalculatorScreen(viewModel: CalculatorViewModel, modifier: Modifier = Modifier) {
+fun CalculatorScreen(
+    viewModel: CalculatorViewModel,
+    modifier: Modifier = Modifier,
+    onVoiceInput: () -> Unit
+) {
     val state by viewModel.uiState.collectAsState()
 
     CalculatorContent(
@@ -36,7 +40,8 @@ fun CalculatorScreen(viewModel: CalculatorViewModel, modifier: Modifier = Modifi
         onToggleScientific = { viewModel.toggleScientific() },
         onClearHistory = { viewModel.clearHistory() },
         lastInput = state.expression.lastOrNull()?.toString() ?: "",
-        modifier = modifier
+        onVoiceInput = onVoiceInput,
+        modifier = modifier,
     )
 }
 
@@ -50,6 +55,7 @@ fun CalculatorContent(
     onToggleScientific: () -> Unit,
     onClearHistory: () -> Unit,
     lastInput: String,
+    onVoiceInput: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val buttons = listOf(
@@ -100,7 +106,8 @@ fun CalculatorContent(
             SystemButtonRow(
                 onClear = onClear,
                 onDelete = onDelete,
-                onToggleScientific = onToggleScientific
+                onToggleScientific = onToggleScientific,
+                onVoiceInput = onVoiceInput
             )
         }
 
@@ -138,7 +145,8 @@ fun CalculatorPreview() {
             onDelete = {},
             onToggleScientific = {},
             onClearHistory = {},
-            lastInput = ""
+            lastInput = "",
+            onVoiceInput = {}
         )
     }
 }
