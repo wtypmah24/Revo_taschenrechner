@@ -1,5 +1,6 @@
 package com.example.taschenrechner.domain
 
+import javax.inject.Inject
 import kotlin.math.cos
 import kotlin.math.ln
 import kotlin.math.log10
@@ -8,7 +9,7 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.math.tan
 
-class CalculatorEngine {
+class CalculatorEngine @Inject constructor() {
     companion object {
         private val operators = setOf("+", "-", "*", "/", "^", "%")
         private val functions = setOf("sin", "cos", "tan", "log", "ln", "√")

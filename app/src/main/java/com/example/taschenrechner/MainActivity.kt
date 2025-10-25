@@ -17,8 +17,10 @@ import androidx.compose.ui.Modifier
 import com.example.taschenrechner.ui.CalculatorScreen
 import com.example.taschenrechner.ui.theme.TaschenrechnerTheme
 import com.example.taschenrechner.viewmodel.CalculatorViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: CalculatorViewModel by viewModels()
 
@@ -32,7 +34,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
                     CalculatorScreen(
-                        viewModel = viewModel,
                         modifier = Modifier.padding(innerPadding),
                         onVoiceInput = { startSpeechRecognition() }
                     )
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
         try {
             speechLauncher.launch(intent)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Toast.makeText(this, "Speech recognition not supported", Toast.LENGTH_SHORT).show()
         }
     }

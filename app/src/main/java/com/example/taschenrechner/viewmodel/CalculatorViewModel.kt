@@ -4,9 +4,11 @@ package com.example.taschenrechner.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.taschenrechner.domain.CalculatorEngine
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class UiState(
     val expression: String = "",
@@ -16,7 +18,8 @@ data class UiState(
     val scientificMode: Boolean = false
 )
 
-open class CalculatorViewModel(private val engine: CalculatorEngine = CalculatorEngine()) :
+@HiltViewModel
+class CalculatorViewModel @Inject constructor(private val engine: CalculatorEngine) :
     ViewModel() {
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState

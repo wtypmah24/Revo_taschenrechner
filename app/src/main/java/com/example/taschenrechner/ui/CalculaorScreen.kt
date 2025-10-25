@@ -22,10 +22,11 @@ import com.example.taschenrechner.ui.component.display.CalculatorDisplay
 import com.example.taschenrechner.ui.component.history.CalculatorHistory
 import com.example.taschenrechner.viewmodel.CalculatorViewModel
 import com.example.taschenrechner.viewmodel.UiState
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
 fun CalculatorScreen(
-    viewModel: CalculatorViewModel,
+    viewModel: CalculatorViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     onVoiceInput: () -> Unit
 ) {
