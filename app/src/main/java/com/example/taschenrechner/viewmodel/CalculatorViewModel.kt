@@ -29,6 +29,11 @@ class CalculatorViewModel @Inject constructor(private val engine: CalculatorEngi
             _uiState.value.copy(expression = _uiState.value.expression + token, error = null)
     }
 
+    fun onVoiceInput(spokenText: String) {
+        val cleaned = spokenText.replace(" ", "")
+        onInput(cleaned)
+    }
+
     fun onDelete() {
         val expr = _uiState.value.expression
         if (expr.isNotEmpty()) _uiState.value = _uiState.value.copy(expression = expr.dropLast(1))

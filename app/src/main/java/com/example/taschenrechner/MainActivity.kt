@@ -1,6 +1,5 @@
 package com.example.taschenrechner
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognizerIntent
@@ -9,20 +8,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.example.taschenrechner.ui.CalculatorScreen
 import com.example.taschenrechner.ui.theme.TaschenrechnerTheme
-import com.example.taschenrechner.viewmodel.CalculatorViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val viewModel: CalculatorViewModel by viewModels()
+    private var voiceInputResult: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,10 +32,20 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     CalculatorScreen(
                         modifier = Modifier.padding(innerPadding),
-                        onVoiceInput = { startSpeechRecognition() }
+                        voiceInput = voiceInputResult,
+                        onVoiceInput = { startSpeechRecognition() },
                     )
                 }
             }
+        }
+    }
+
+    private val speechLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val matches = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            voiceInputResult = matches?.firstOrNull()
         }
     }
 
@@ -57,19 +64,6 @@ class MainActivity : ComponentActivity() {
             speechLauncher.launch(intent)
         } catch (_: Exception) {
             Toast.makeText(this, "Speech recognition not supported", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private val speechLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data = result.data
-            val matches = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            if (!matches.isNullOrEmpty()) {
-                val spokenText = matches[0]
-                viewModel.onInput(spokenText.replace(" ", ""))
-            }
         }
     }
 }

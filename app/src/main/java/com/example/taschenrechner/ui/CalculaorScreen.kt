@@ -10,11 +10,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.taschenrechner.ui.component.button.CalculatorButtonRow
 import com.example.taschenrechner.ui.component.button.ScientificButtons
 import com.example.taschenrechner.ui.component.button.SystemButtonRow
@@ -22,15 +24,19 @@ import com.example.taschenrechner.ui.component.display.CalculatorDisplay
 import com.example.taschenrechner.ui.component.history.CalculatorHistory
 import com.example.taschenrechner.viewmodel.CalculatorViewModel
 import com.example.taschenrechner.viewmodel.UiState
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
 fun CalculatorScreen(
-    viewModel: CalculatorViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
-    onVoiceInput: () -> Unit
+    viewModel: CalculatorViewModel = hiltViewModel(),
+    voiceInput: String? = null,
+    onVoiceInput: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(voiceInput) {
+        voiceInput?.let { viewModel.onVoiceInput(it) }
+    }
 
     CalculatorContent(
         state = state,
