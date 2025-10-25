@@ -4,6 +4,8 @@ package com.example.taschenrechner.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.taschenrechner.domain.CalculatorEngine
+import com.example.taschenrechner.domain.dao.SolutionDao
+import com.example.taschenrechner.domain.entity.HistoryItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,10 +21,24 @@ data class UiState(
 )
 
 @HiltViewModel
-class CalculatorViewModel @Inject constructor(private val engine: CalculatorEngine) :
+class CalculatorViewModel @Inject constructor(
+    private val engine: CalculatorEngine,
+    private val dao: SolutionDao
+) :
     ViewModel() {
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState
+
+    init {
+        loadHistory()
+    }
+
+    private fun loadHistory() {
+        viewModelScope.launch {
+            val historyList = dao.getAll().map { "${it.expression} = ${it.result}" }
+            _uiState.value = _uiState.value.copy(history = historyList)
+        }
+    }
 
     fun onInput(token: String) {
         _uiState.value =
@@ -48,9 +64,10 @@ class CalculatorViewModel @Inject constructor(private val engine: CalculatorEngi
     }
 
     fun clearHistory() {
-        _uiState.value = _uiState.value.copy(
-            history = emptyList()
-        )
+        viewModelScope.launch {
+            dao.deleteAll()
+            _uiState.value = _uiState.value.copy(history = emptyList())
+        }
     }
 
 
@@ -64,10 +81,12 @@ class CalculatorViewModel @Inject constructor(private val engine: CalculatorEngi
             val res = engine.evaluate(expr)
             if (res.isSuccess) {
                 val value = res.getOrThrow()
+                dao.insert(HistoryItem(expression = expr, result = value.toString()))
+                val historyList = dao.getAll().map { "${it.expression} = ${it.result}" }
                 _uiState.value = _uiState.value.copy(
                     expression = "",
                     result = value.toString(),
-                    history = listOf("$expr = $value") + _uiState.value.history,
+                    history = historyList,
                     error = null
                 )
             } else {

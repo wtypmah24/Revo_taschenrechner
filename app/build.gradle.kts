@@ -45,6 +45,9 @@ android {
     hilt {
         enableAggregatingTask = false
     }
+    configurations.all {
+        exclude(group = "com.intellij", module = "annotations")
+    }
 }
 
 dependencies {
@@ -58,6 +61,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui.text)
+    implementation(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,9 +73,18 @@ dependencies {
 
     ksp(libs.androidx.room.compiler)
 
-    implementation(libs.hilt.android)
+    implementation(libs.hilt.android) {
+        exclude(group = "com.intellij", module = "annotations")
+    }
     ksp(libs.hilt.compiler)
 
     implementation(libs.javapoet)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(libs.androidx.room.runtime) {
+        exclude(group = "com.intellij", module = "annotations")
+    }
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    implementation("org.jetbrains:annotations:23.0.0")
 }
